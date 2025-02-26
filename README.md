@@ -20,4 +20,11 @@ go get github.com/golang-migrate/migrate
 
 go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
+### Create migration up and down
+migrate create -ext sql -dir ./data/db/migrations <table_name>
 
+### Migrate up to db
+migrate -database postgres://DB_USER:DB_PASS@DB_HOST:DB_PORT/DB_NAME?sslmode=disable -path ./data/db/migrations up
+
+### Migrate down db
+migrate -database postgres://DB_USER:DB_PASS@DB_HOST:DB_PORT/DB_NAME?sslmode=disable -path ./core/db/migrations down

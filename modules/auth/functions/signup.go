@@ -31,11 +31,11 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	if err = json.Unmarshal(body, &user); err != nil {
 		responses.Err(w, http.StatusBadRequest, err)
 	}
-	if err = user.Prepare("cadastro"); err != nil {
+	if err = user.Prepare("signup"); err != nil {
 		responses.Err(w, http.StatusBadRequest, err)
 		return
 	}
-	query := "INSERT INTO users (name, email, pass, nick) VALUES ($1, $2, $3, $4) RETURNING *"
+	query := "INSERT INTO users (name, email, pass) VALUES ($1, $2, $3) RETURNING *"
 	var insertedUser models.User
 	err = tx.QueryRow(context.Background(),
 		query,
@@ -53,14 +53,15 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		responses.Err(w, http.StatusInternalServerError, err)
 	}
 
-	token, err := auth_token.Createtoken(user.ID)
+	token, refreshToken, err := auth_token.CreateToken(user.ID)
 	if err != nil {
 		responses.Err(w, http.StatusInternalServerError, err)
 	}
-	fmt.Println(token, user.ID)
-	insertTokenQuery := "INSERT INTO user_token (token, user_id) VALUES ($1, $2)"
+	fmt.Println(token, refreshToken, user.ID)
+	insertTokenQuery := "INSERT INTO tokens (access_token,refresh_token, user_id) VALUES ($1, $2, $3)"
 	_, err = tx.Exec(context.Background(), insertTokenQuery,
 		token,
+		refreshToken,
 		insertedUser.ID,
 	)
 
@@ -82,7 +83,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 			"name":  insertedUser.Name,
 			"email": insertedUser.Email,
 		},
-		"token": token,
+		"access_token":  token,
+		"refresh_token": refreshToken,
 	}
 
 	responses.JSON(w, http.StatusOK, response)

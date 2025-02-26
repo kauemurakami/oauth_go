@@ -9,10 +9,11 @@ import (
 )
 
 var (
-	Connection_string = ""
-	DB_url            = ""
-	API_port          = ""
-	SECRET_KEY        []byte
+	Connection_string  = ""
+	DB_url             = ""
+	API_port           = ""
+	SECRET_KEY         []byte
+	REFRESH_SECRET_KEY []byte
 )
 
 func SetupEnvironments() {
@@ -48,4 +49,5 @@ func SetupEnvironments() {
 		)
 
 	SECRET_KEY = []byte(os.Getenv("SECRET_KEY"))
+	REFRESH_SECRET_KEY = []byte(os.Getenv("REFRESH_SECRET_KEY"))
 }

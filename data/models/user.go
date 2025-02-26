@@ -2,7 +2,7 @@ package models
 
 import (
 	"errors"
-	sec "oath2/core/secutiry"
+	sec "oauth2/core/security"
 	"strings"
 	"time"
 
