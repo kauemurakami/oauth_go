@@ -8,10 +8,9 @@ import (
 	"net/http"
 	auth_token "oauth2/core/helpers/auth"
 	responses "oauth2/core/helpers/response"
+	sec "oauth2/core/security"
 	"oauth2/data/db"
 	"oauth2/data/models"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 func Signin(w http.ResponseWriter, r *http.Request) {
@@ -56,8 +55,8 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Verificar se a senha é válida
-	err = bcrypt.CompareHashAndPassword([]byte(user.Pass), []byte(userInput.Password))
+	// Verificar se a senha é válida utilizando o pacote sec
+	err = sec.ComparePassHash(userInput.Password, user.Pass)
 	if err != nil {
 		responses.Err(w, http.StatusUnauthorized, fmt.Errorf("invalid email or password"))
 		return
