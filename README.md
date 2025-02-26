@@ -5,7 +5,19 @@ go get github.com/jackc/pgx/v5/pgconn@v5.7.2
 
 go get github.com/lib/pq
 
-go get github.com/joho/godotenv
+go get github.com/joho/godotenv <br/>
+```env
+DB_HOST=127.0.0.1 or localhost  ...
+DB_USER=<db-user>
+DB_PASS=<db-pass>
+DB_NAME=<db-name>
+DB_PORT=<db-port> postgres default 5432
+API_PORT=<api-port> 8000 3000 ...
+DB_SSL=disable
+DB_TZ=America/Sao_Paulo your timezone
+SECRET_KEY=<secre-key>
+REFRESH_SECRET_KEY=<refresh-secret-key>
+```
 
 go get github.com/gorilla/mux
 
