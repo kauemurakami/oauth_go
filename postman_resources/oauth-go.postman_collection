@@ -117,26 +117,6 @@
 			"response": []
 		},
 		{
-			"name": "cancel token",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:3000/auth/cancel-token",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"auth",
-						"cancel-token"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "signup",
 			"event": [
 				{
@@ -235,7 +215,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://localhost:3000/auth/revoke",
+					"raw": "http://localhost:3000/auth/revoke-token",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -243,7 +223,7 @@
 					"port": "3000",
 					"path": [
 						"auth",
-						"revoke"
+						"revoke-token"
 					]
 				}
 			},
