@@ -14,3 +14,6 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 func RefreshToken(w http.ResponseWriter, r *http.Request) {
 	functions.RefreshToken(w, r)
 }
+func RevokeToken(w http.ResponseWriter, r *http.Request) {
+	functions.RevokeToken(w, r)
+}
