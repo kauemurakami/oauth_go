@@ -22,6 +22,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		responses.Err(w, http.StatusInternalServerError, err)
 		return
 	}
+	//revert transaction in error case
 	defer tx.Rollback(context.Background())
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -52,8 +53,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		responses.Err(w, http.StatusInternalServerError, err)
 	}
-
-	token, refreshToken, err := auth_token.CreateToken(user.ID)
+	token, refreshToken, err := auth_token.CreateToken(user.ID, "")
 	if err != nil {
 		responses.Err(w, http.StatusInternalServerError, err)
 	}

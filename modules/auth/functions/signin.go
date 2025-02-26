@@ -16,7 +16,8 @@ import (
 func Signin(w http.ResponseWriter, r *http.Request) {
 	conn := db.SetupDB()
 	defer conn.Close(context.Background())
-	// Init transaction
+
+	// Iniciar transação
 	tx, err := conn.Begin(context.Background())
 	if err != nil {
 		responses.Err(w, http.StatusInternalServerError, err)
@@ -33,7 +34,7 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 
 	var userInput struct {
 		Email    string `json:"email"`
-		Password string `json:"password"`
+		Password string `json:"pass"`
 	}
 
 	// Deserializar os dados
@@ -55,35 +56,51 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Verificar se a senha é válida utilizando o pacote sec
+	// Verificar se a senha é válida
 	err = sec.ComparePassHash(userInput.Password, user.Pass)
 	if err != nil {
 		responses.Err(w, http.StatusUnauthorized, fmt.Errorf("invalid email or password"))
 		return
 	}
 
+	// Buscar o refresh token no banco de dados
+	var existingRefreshToken string
+	getTokenQuery := "SELECT refresh_token FROM tokens WHERE user_id = $1"
+	err = tx.QueryRow(context.Background(), getTokenQuery, user.ID).Scan(&existingRefreshToken)
+	if err != nil {
+		existingRefreshToken = "" // Se não houver token, criamos um novo
+	}
+
 	// Gerar novos tokens
-	accessToken, refreshToken, err := auth_token.CreateToken(user.ID)
+	accessToken, refreshToken, err := auth_token.CreateToken(user.ID, existingRefreshToken)
 	if err != nil {
 		responses.Err(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	// Atualizar os tokens no banco de dados
-	updateTokenQuery := "UPDATE tokens SET access_token = $1, refresh_token = $2 WHERE user_id = $3"
-	_, err = tx.Exec(context.Background(), updateTokenQuery, accessToken, refreshToken, user.ID)
+	// Atualizar ou inserir tokens no banco
+	if existingRefreshToken == "" {
+		// Não existia um refresh token, então inserimos um novo registro
+		insertTokenQuery := "INSERT INTO tokens (access_token, refresh_token, user_id) VALUES ($1, $2, $3)"
+		_, err = tx.Exec(context.Background(), insertTokenQuery, accessToken, refreshToken, user.ID)
+	} else if existingRefreshToken != refreshToken {
+		// Refresh token mudou, então atualizamos
+		updateTokenQuery := "UPDATE tokens SET access_token = $1, refresh_token = $2 WHERE user_id = $3"
+		_, err = tx.Exec(context.Background(), updateTokenQuery, accessToken, refreshToken, user.ID)
+	}
+
 	if err != nil {
 		responses.Err(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	// Commit the transaction
+	// Commit da transação
 	if err = tx.Commit(context.Background()); err != nil {
 		responses.Err(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	// Resposta com os tokens
+	// Responder com os tokens
 	response := map[string]interface{}{
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,

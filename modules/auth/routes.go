@@ -10,4 +10,5 @@ func SetupAuthRoutes(router *mux.Router) {
 
 	router.HandleFunc("/signin", Signin).Methods(http.MethodPost)
 	router.HandleFunc("/signup", Signup).Methods(http.MethodPost)
+	router.HandleFunc("/refresh-token", RefreshToken).Methods(http.MethodPost)
 }

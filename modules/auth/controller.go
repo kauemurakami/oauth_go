@@ -11,3 +11,6 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 func Signup(w http.ResponseWriter, r *http.Request) {
 	functions.Signup(w, r)
 }
+func RefreshToken(w http.ResponseWriter, r *http.Request) {
+	functions.RefreshToken(w, r)
+}
