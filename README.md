@@ -1,3 +1,9 @@
+### First project Oauth with go lang
+
+ - access_token expires in 1 minuto (to facility test of the refresh)
+ - refresh_token expires in 7 days<br/>
+ You can change this in `core/helpers/auth/create_token.go`
+
 ### Dependencies
 
 go get github.com/jackc/pgx
