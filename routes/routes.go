@@ -2,6 +2,7 @@ package routes
 
 import (
 	"oauth2/modules/auth"
+	"oauth2/modules/users"
 
 	"github.com/gorilla/mux"
 )
@@ -11,8 +12,7 @@ func SetupAppRoutes() *mux.Router {
 	//test prefix
 	authRouter := router.PathPrefix("/auth").Subrouter()
 	auth.SetupAuthRoutes(authRouter)
-
-	// auth.SetupAuthRoutes(router)
-	// normal acima
+	usersRouter := router.PathPrefix("/users").Subrouter()
+	users.SetupUsersRoutes(usersRouter)
 	return router
 }

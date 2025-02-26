@@ -14,7 +14,7 @@ type User struct {
 	ID        uuid.UUID `json:"id"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
-	Pass      string    `json:"pass"`
+	Pass      string    `json:"-"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
